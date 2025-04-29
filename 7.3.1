@@ -1,0 +1,40 @@
+class RationalError(ZeroDivisionError):
+    def __init__(self, message="Знаменник не може бути нулем"):
+        super().__init__(message)
+
+# Клас для раціональних чисел
+class Rational:
+    def __init__(self, numerator, denominator):
+        if denominator == 0:
+            raise RationalError()
+        self.numerator = numerator
+        self.denominator = denominator
+        self._reduce()
+
+    def _gcd(self, a, b):
+        """Найбільший спільний дільник (алгоритм Евкліда)"""
+        while b != 0:
+            a, b = b, a % b
+        return a
+
+    def _reduce(self):
+        """Скорочення дробу"""
+        gcd = self._gcd(abs(self.numerator), abs(self.denominator))
+        self.numerator //= gcd
+        self.denominator //= gcd
+        # якщо знаменник від’ємний — переносимо знак до чисельника
+        if self.denominator < 0:
+            self.numerator *= -1
+            self.denominator *= -1
+
+    def __str__(self):
+        return f"{self.numerator}/{self.denominator}"
+
+# Тестування
+try:
+    r1 = Rational(1, 2)
+    print("Раціональне число:", r1)
+
+    r2 = Rational(3, 0)  # Це спричинить виняток
+except RationalError as e:
+    print("Помилка:", e)
