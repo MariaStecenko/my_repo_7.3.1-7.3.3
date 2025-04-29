@@ -1,0 +1,55 @@
+class RationalValueError(Exception):
+    def __init__(self, message="Некоректна операція з раціональними числами"):
+        super().__init__(message)
+
+# Клас для раціональних чисел
+class Rational:
+    def __init__(self, numerator, denominator):
+        if denominator == 0:
+            raise ZeroDivisionError("Знаменник не може бути нулем")
+        self.numerator = numerator
+        self.denominator = denominator
+        self._reduce()
+
+    def _gcd(self, a, b):
+        """Найбільший спільний дільник (алгоритм Евкліда)"""
+        while b != 0:
+            a, b = b, a % b
+        return a
+
+    def _reduce(self):
+        """Скорочення дробу"""
+        gcd = self._gcd(abs(self.numerator), abs(self.denominator))
+        self.numerator //= gcd
+        self.denominator //= gcd
+        # якщо знаменник від’ємний — переносимо знак до чисельника
+        if self.denominator < 0:
+            self.numerator *= -1
+            self.denominator *= -1
+
+    def __add__(self, other):
+        if not isinstance(other, Rational):
+            raise RationalValueError("Можна додавати тільки об'єкти Rational")
+        num = self.numerator * other.denominator + other.numerator * self.denominator
+        den = self.denominator * other.denominator
+        return Rational(num, den)
+
+    def __sub__(self, other):
+        if not isinstance(other, Rational):
+            raise RationalValueError("Можна віднімати тільки об'єкти Rational")
+        num = self.numerator * other.denominator - other.numerator * self.denominator
+        den = self.denominator * other.denominator
+        return Rational(num, den)
+
+    def __str__(self):
+        return f"{self.numerator}/{self.denominator}"
+
+# Тестування
+try:
+    r1 = Rational(1, 3)
+    r2 = Rational(1, 6)
+    print("Сума:", r1 + r2)
+
+    result = r1 + 5  # Спроба додати нераціональне число
+except RationalValueError as e:
+    print("Помилка:", e)
