@@ -1,3 +1,4 @@
+# Клас виключення для некоректних даних
 class RationalValueError(Exception):
     def __init__(self, message="Некоректна операція або значення для Rational"):
         super().__init__(message)
@@ -26,4 +27,30 @@ class Rational:
             self.denominator *= -1
 
     def __str__(self):
-        return f"{self.n
+        return f"{self.numerator}/{self.denominator}"
+
+# Клас для списку раціональних чисел
+class RationalList:
+    def __init__(self):
+        self._list = []
+
+    def add(self, item):
+        if not isinstance(item, Rational):
+            raise RationalValueError("До списку можна додавати тільки об'єкти Rational")
+        self._list.append(item)
+
+    def __str__(self):
+        return "[" + ", ".join(str(r) for r in self._list) + "]"
+
+# Тестування
+try:
+    rl = RationalList()
+    r1 = Rational(1, 2)
+    r2 = Rational(3, 4)
+    rl.add(r1)
+    rl.add(r2)
+    print("Список раціональних чисел:", rl)
+
+    rl.add(5)  # Помилкове додавання — не Rational
+except RationalValueError as e:
+    print("Помилка:", e)
